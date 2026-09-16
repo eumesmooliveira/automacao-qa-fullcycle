@@ -2,217 +2,363 @@
 
 [![Cypress Tests](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml/badge.svg)](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml)
 
-Projeto de Quality Assurance desenvolvido para demonstrar um fluxo de testes envolvendo planejamento, definição de cenários, automação de API e interface, execução de regressão, validação de resultados, geração de evidências e integração contínua.
+Projeto de Quality Assurance desenvolvido para demonstrar um fluxo completo de automação de testes, envolvendo planejamento, definição de cenários, automação de API e interface, execução de regressão, integração contínua e geração automatizada de relatórios e evidências.
 
 A suíte utiliza **Cypress e JavaScript** e possui **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
+
+As execuções são integradas ao **GitHub Actions**, com geração automática de relatório HTML através do **Mochawesome** e armazenamento das evidências como artifacts do pipeline.
+
+---
+
+## 🎯 Objetivo do Projeto
+
+Demonstrar na prática conhecimentos aplicados ao processo de Quality Assurance, contemplando:
+
+- planejamento e definição de cenários de teste;
+- automação de testes de interface;
+- automação de testes de API REST;
+- validação de cenários positivos e negativos;
+- utilização de dados dinâmicos durante os testes;
+- execução automatizada da suíte;
+- integração contínua;
+- geração de relatórios e evidências;
+- documentação dos resultados.
+
+O projeto foi estruturado como uma suíte de regressão automatizada, permitindo validar diferentes camadas de uma aplicação dentro de um único repositório.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **JavaScript / Node.js** — linguagem e ambiente de execução
-- **Cypress** — automação de testes E2E e API via `cy.request`
+- **Cypress** — automação de testes E2E e API
 - **REST / JSON** — validação de serviços e dados retornados
-- **Markdown** — documentação de cenários e resultados
-- **Git / GitHub** — versionamento do projeto
+- **Mochawesome** — geração automatizada de relatórios HTML
 - **GitHub Actions** — integração contínua e execução automatizada da suíte
+- **Git / GitHub** — versionamento e hospedagem do projeto
+- **Markdown** — documentação dos cenários e resultados
 
 ---
 
-## 📂 Estrutura do Projeto
+## 🧪 Aplicações Testadas
+
+### UI — SauceDemo
+
+Aplicação utilizada para automação dos fluxos E2E relacionados a:
+
+- autenticação;
+- validação de credenciais inválidas;
+- bloqueio de usuário;
+- carrinho de compras;
+- checkout;
+- validação de campos obrigatórios;
+- manipulação de múltiplos produtos.
+
+### API — Restful-Booker
+
+API utilizada para automação e validação de:
+
+- autenticação;
+- criação de reservas;
+- consulta de reservas;
+- cenários negativos;
+- autorização;
+- atualização de dados;
+- utilização de IDs dinâmicos.
+
+---
+
+## 📋 Cenários Automatizados
+
+A suíte possui atualmente **13 testes automatizados**, sendo:
+
+| Suíte | Testes | Aprovados | Falhas |
+|---|---:|---:|---:|
+| API REST | 7 | 7 | 0 |
+| E2E / UI | 6 | 6 | 0 |
+| **Total** | **13** | **13** | **0** |
+
+### 🖥️ E2E / UI — SauceDemo
+
+1. **CT01** — Login e conclusão de compra com sucesso (Happy Path)
+2. **CT02** — Login com senha inválida
+3. **CT10** — Login com usuário bloqueado
+4. **CT11** — Adição e remoção de produto do carrinho
+5. **CT12** — Validação dos campos obrigatórios do checkout
+6. **CT13** — Adição de múltiplos produtos e validação do carrinho
+
+### 🔌 API — Restful-Booker
+
+1. **CT03** — Geração de token com credenciais válidas
+2. **CT04** — Criação de reserva e validação de status e dados retornados
+3. **CT05** — Autenticação com credenciais inválidas
+4. **CT06** — Consulta de reserva inexistente
+5. **CT07** — Tentativa de atualização sem autenticação
+6. **CT08** — Criação e consulta utilizando ID dinâmico
+7. **CT09** — Atualização autenticada utilizando token e ID dinâmicos
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```text
 automacao-qa-fullcycle/
+│
 ├── .github/
 │   └── workflows/
 │       └── cypress-tests.yml
+│
 ├── cypress/
 │   ├── e2e/
 │   │   ├── api_restful_booker.cy.js
 │   │   └── fluxo_ecommerce.cy.js
+│   │
 │   ├── fixtures/
-│   └── support/
+│   ├── support/
+│   │   ├── commands.js
+│   │   └── e2e.js
+│   │
+│   ├── reports/
+│   └── videos/
+│
 ├── docs/
-│   ├── cenarios_teste/
 │   └── relatorios_bugs/
+│       └── relatorio_execucao.md
+│
+├── .gitignore
 ├── cypress.config.js
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
 ---
 
-## 🎯 Objetivo do Projeto
+## ▶️ Executando o Projeto
 
-O projeto simula diferentes etapas de um processo de Quality Assurance, desde a definição dos cenários até a execução automatizada e análise dos resultados.
+### Pré-requisitos
 
-A cobertura foi estruturada em duas frentes:
+É necessário possuir:
 
-- **API REST:** autenticação, criação, consulta e atualização de reservas.
-- **E2E / UI:** autenticação, carrinho, checkout e conclusão de compra.
+- Node.js
+- npm
+- Git
 
-Os testes contemplam cenários positivos e negativos, validações de respostas HTTP, dados retornados, regras da interface e fluxos relevantes para regressão.
+### 1. Clone o repositório
 
----
+```bash
+git clone https://github.com/eumesmooliveira/automacao-qa-fullcycle.git
+```
 
-## 🧪 Estratégia de Testes
+### 2. Acesse o projeto
 
-A estratégia contempla:
+```bash
+cd automacao-qa-fullcycle
+```
 
-- **Testes funcionais:** validação dos comportamentos esperados.
-- **Testes E2E:** validação de fluxos completos pela interface.
-- **Testes de API:** validação de endpoints REST utilizando `cy.request`.
-- **Cenários positivos e negativos:** happy paths e comportamentos de erro.
-- **Autenticação e autorização:** validação de acesso válido, inválido e operações protegidas.
-- **Testes de regressão:** reexecução automatizada dos fluxos implementados.
-- **Dados dinâmicos:** criação de recursos e reutilização dos IDs retornados pela API.
-- **Documentação:** organização de cenários e resultados do processo de testes.
-- **Evidências:** geração automática de vídeos das execuções Cypress.
-- **Integração contínua:** execução automatizada da suíte por meio do GitHub Actions.
-
----
-
-## 🔌 Cobertura de Testes de API
-
-A suíte utiliza a **Restful-Booker API** para validar diferentes comportamentos de serviços REST.
-
-| Caso | Cenário | Tipo |
-|---|---|---|
-| CT03 | Geração de token com credenciais válidas | Positivo |
-| CT04 | Criação de reserva e validação de status e dados | Positivo |
-| CT05 | Autenticação com credenciais inválidas | Negativo |
-| CT06 | Consulta de reserva inexistente | Negativo |
-| CT07 | Tentativa de atualização sem autenticação | Negativo |
-| CT08 | Criação e consulta utilizando ID dinâmico | Positivo |
-| CT09 | Atualização autenticada utilizando token e ID dinâmicos | Positivo |
-
-### Validações realizadas
-
-- Status HTTP
-- Propriedades do response body
-- Conteúdo dos dados retornados
-- Token de autenticação
-- IDs gerados dinamicamente
-- Comportamento de recursos inexistentes
-- Restrição de operações sem autenticação
-- Atualização de dados via requisição autenticada
-
----
-
-## 🖥️ Cobertura de Testes E2E
-
-Os testes de interface utilizam o **SauceDemo** para validar fluxos de autenticação, carrinho e checkout.
-
-| Caso | Cenário | Tipo |
-|---|---|---|
-| CT01 | Login e conclusão de compra | Happy Path |
-| CT02 | Login com senha inválida | Negativo |
-| CT10 | Login com usuário bloqueado | Negativo |
-| CT11 | Adição e remoção de produto do carrinho | Funcional |
-| CT12 | Validação dos campos obrigatórios do checkout | Negativo |
-| CT13 | Adição de múltiplos produtos e validação do carrinho | Funcional |
-
-### Fluxos validados
-
-- Autenticação
-- Tratamento de credenciais inválidas
-- Usuário bloqueado
-- Catálogo de produtos
-- Adição e remoção de itens
-- Quantidade de produtos no carrinho
-- Validação de campos obrigatórios
-- Checkout
-- Confirmação da compra
-
----
-
-## 📊 Resultado da Execução
-
-Execução completa validada localmente e em ambiente de CI:
-
-| Suíte | Testes | Aprovados | Falhas |
-|---|---:|---:|---:|
-| API REST | 7 | 7 | 0 |
-| E2E / UI | 6 | 6 | 0 |
-| **Total** | **13** | **13** | **0** |
-
-**Resultado: 13/13 testes executados com sucesso.**
-
-A suíte pode ser executada em modo headless e gera evidências em vídeo automaticamente por meio do Cypress.
-
----
-
-## 🔄 Integração Contínua
-
-O projeto utiliza **GitHub Actions** para executar automaticamente a suíte de testes Cypress.
-
-O workflow realiza:
-
-- Checkout do repositório
-- Configuração do ambiente Node.js
-- Instalação das dependências
-- Execução automatizada da suíte Cypress
-- Validação dos testes de API e E2E
-
-Na execução validada em CI:
-
-| Suíte | Testes | Aprovados | Falhas |
-|---|---:|---:|---:|
-| API REST | 7 | 7 | 0 |
-| E2E / UI | 6 | 6 | 0 |
-| **Total** | **13** | **13** | **0** |
-
-**Status da suíte no GitHub Actions: 13/13 testes aprovados.**
-
-O status mais recente do workflow também pode ser acompanhado pelo badge exibido no início deste README.
-
----
-
-## ▶️ Como Executar
-
-Clone o repositório e instale as dependências:
+### 3. Instale as dependências
 
 ```bash
 npm install
 ```
 
-Execute toda a suíte:
+### 4. Execute a suíte completa
 
 ```bash
 npx cypress run
 ```
 
-Para executar somente os testes de API:
+Para abrir o Cypress em modo interativo:
 
 ```bash
-npx cypress run --spec "cypress/e2e/api_restful_booker.cy.js"
-```
-
-Para executar somente os testes E2E:
-
-```bash
-npx cypress run --spec "cypress/e2e/fluxo_ecommerce.cy.js"
+npx cypress open
 ```
 
 ---
 
-## 📌 Boas Práticas Aplicadas
+## ✅ Resultado da Execução
 
-- Separação dos testes por contexto e responsabilidade
-- Reutilização de funções auxiliares
-- Redução de código duplicado
-- Assertions em diferentes etapas dos fluxos
-- Uso de IDs e tokens dinâmicos
-- Cenários positivos e negativos
-- Ausência de esperas fixas (`cy.wait`) nos fluxos E2E
-- Versionamento com Git
-- Integração contínua com GitHub Actions
-- Organização voltada à manutenção e expansão da suíte
+Na execução completa atualmente documentada:
+
+```text
+API REST
+7 testes executados
+7 aprovados
+0 falhas
+
+E2E / UI
+6 testes executados
+6 aprovados
+0 falhas
+
+TOTAL
+13 testes executados
+13 aprovados
+0 falhas
+```
+
+**Taxa de sucesso da execução: 100%.**
+
+Os testes cobrem cenários positivos e negativos nas camadas de API e interface.
+
+---
+
+## 📊 Relatórios e Evidências
+
+A suíte utiliza o **Mochawesome** para gerar automaticamente um relatório HTML após a execução dos testes.
+
+O relatório apresenta informações como:
+
+- quantidade de testes executados;
+- testes aprovados e reprovados;
+- duração da execução;
+- organização por suíte e contexto;
+- detalhamento individual dos cenários;
+- resultado de cada teste.
+
+Após uma execução local, o relatório é gerado em:
+
+```text
+cypress/reports/index.html
+```
+
+As execuções E2E também geram evidências em vídeo automaticamente pelo Cypress.
+
+---
+
+## ⚙️ Integração Contínua — GitHub Actions
+
+O projeto possui um pipeline de integração contínua configurado através do **GitHub Actions**.
+
+O workflow é executado automaticamente em:
+
+- `push` para a branch `main`;
+- `pull_request` direcionado para a branch `main`.
+
+Durante o pipeline são realizadas as seguintes etapas:
+
+```text
+Push / Pull Request
+        ↓
+Checkout do repositório
+        ↓
+Configuração do Node.js
+        ↓
+Instalação das dependências
+        ↓
+Execução da suíte Cypress
+        ↓
+Geração do relatório Mochawesome
+        ↓
+Upload do relatório como Artifact
+```
+
+O pipeline executa os **13 testes automatizados** em ambiente de integração contínua.
+
+Ao final da execução, o relatório Mochawesome é disponibilizado como um artifact chamado:
+
+```text
+mochawesome-report
+```
+
+Isso permite consultar as evidências e os resultados gerados durante a execução do workflow.
+
+---
+
+## 🔎 Estratégia de Testes
+
+A suíte foi construída considerando diferentes tipos de validação.
+
+### Testes positivos
+
+Validam o comportamento esperado da aplicação quando são fornecidos dados válidos.
+
+Exemplos:
+
+- autenticação válida;
+- conclusão de compra;
+- criação de reserva;
+- atualização autenticada.
+
+### Testes negativos
+
+Validam o comportamento da aplicação diante de condições inválidas ou não autorizadas.
+
+Exemplos:
+
+- senha inválida;
+- usuário bloqueado;
+- campos obrigatórios não preenchidos;
+- consulta de recurso inexistente;
+- atualização sem autenticação.
+
+### Dados dinâmicos
+
+Alguns cenários de API utilizam dados obtidos durante a própria execução.
+
+Exemplo:
+
+```text
+Criar reserva
+      ↓
+Capturar ID retornado
+      ↓
+Utilizar o ID na consulta
+      ↓
+Validar os dados
+```
+
+Esse fluxo reduz a dependência de dados previamente cadastrados e torna os testes mais independentes.
+
+---
+
+## 💡 Boas Práticas Aplicadas
+
+Durante o desenvolvimento da suíte foram aplicadas práticas como:
+
+- separação entre testes de API e interface;
+- organização dos testes por contexto;
+- utilização de cenários positivos e negativos;
+- validação de status HTTP e dados retornados;
+- reutilização de dados gerados durante a execução;
+- uso de IDs e tokens dinâmicos;
+- execução headless da suíte;
+- geração de evidências em vídeo;
+- integração contínua com GitHub Actions;
+- geração automatizada de relatórios;
+- armazenamento de relatórios como artifacts do pipeline;
+- documentação dos cenários e resultados;
+- versionamento com Git.
+
+---
+
+## 📈 Relatório do Ciclo de Testes
+
+Além do relatório automatizado gerado pelo Mochawesome, o projeto possui documentação do ciclo de execução em:
+
+```text
+docs/relatorios_bugs/relatorio_execucao.md
+```
+
+O documento registra as métricas da execução e os cenários contemplados pela suíte.
 
 ---
 
 ## 🔄 Próximas Evoluções
 
-- Geração de relatórios automatizados de execução
-- Evolução das métricas de qualidade da suíte
-- Ampliação gradual da cobertura de regressão
+O projeto pode continuar evoluindo através de:
+
+- ampliação gradual da cobertura de regressão;
+- implementação de Page Object Model nos fluxos E2E;
+- maior utilização de fixtures para gerenciamento de massas de teste;
+- execução da suíte em múltiplos navegadores;
+- evolução das métricas e relatórios de qualidade;
+- inclusão de novos cenários de API e interface.
+
+---
+
+## 👨‍💻 Autor
+
+**Felipe de Oliveira Santos**
+
+Projeto desenvolvido como parte do portfólio profissional em **Quality Assurance e Automação de Testes**.
