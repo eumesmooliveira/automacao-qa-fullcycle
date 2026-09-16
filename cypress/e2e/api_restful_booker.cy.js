@@ -62,7 +62,7 @@ describe('Testes de API - Restful-Booker Suite', () => {
   });
 
   describe('Criação e consulta de reservas', () => {
-    it('CT04 - Deve criar uma nova reserva com sucesso (Contrato e Status)', () => {
+    it('CT04 - Deve criar uma nova reserva e validar status e dados retornados', () => {
       const bookingData = createBookingData({
         totalprice: 1500,
         bookingdates: {
