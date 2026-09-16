@@ -28,3 +28,11 @@ jobs:
 
       - name: Run Cypress tests
         run: npx cypress run
+
+      - name: Upload Mochawesome report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: cypress/reports/
+          retention-days: 30
