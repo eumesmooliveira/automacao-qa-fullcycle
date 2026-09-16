@@ -1,8 +1,10 @@
 # 🚀 Full-Cycle QA Suite — UI & API Automation
 
-Projeto de Quality Assurance desenvolvido para demonstrar um fluxo de testes envolvendo planejamento, definição de cenários, automação de API e interface, execução de regressão, validação de resultados e geração de evidências.
+[![Cypress Tests](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml/badge.svg)](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml)
 
-A suíte utiliza **Cypress e JavaScript** e atualmente possui **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
+Projeto de Quality Assurance desenvolvido para demonstrar um fluxo de testes envolvendo planejamento, definição de cenários, automação de API e interface, execução de regressão, validação de resultados, geração de evidências e integração contínua.
+
+A suíte utiliza **Cypress e JavaScript** e possui **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
 
 ---
 
@@ -13,6 +15,7 @@ A suíte utiliza **Cypress e JavaScript** e atualmente possui **13 testes automa
 - **REST / JSON** — validação de serviços e dados retornados
 - **Markdown** — documentação de cenários e resultados
 - **Git / GitHub** — versionamento do projeto
+- **GitHub Actions** — integração contínua e execução automatizada da suíte
 
 ---
 
@@ -20,6 +23,9 @@ A suíte utiliza **Cypress e JavaScript** e atualmente possui **13 testes automa
 
 ```text
 automacao-qa-fullcycle/
+├── .github/
+│   └── workflows/
+│       └── cypress-tests.yml
 ├── cypress/
 │   ├── e2e/
 │   │   ├── api_restful_booker.cy.js
@@ -62,6 +68,7 @@ A estratégia contempla:
 - **Dados dinâmicos:** criação de recursos e reutilização dos IDs retornados pela API.
 - **Documentação:** organização de cenários e resultados do processo de testes.
 - **Evidências:** geração automática de vídeos das execuções Cypress.
+- **Integração contínua:** execução automatizada da suíte por meio do GitHub Actions.
 
 ---
 
@@ -121,7 +128,7 @@ Os testes de interface utilizam o **SauceDemo** para validar fluxos de autentica
 
 ## 📊 Resultado da Execução
 
-Última execução completa da suíte:
+Execução completa validada localmente e em ambiente de CI:
 
 | Suíte | Testes | Aprovados | Falhas |
 |---|---:|---:|---:|
@@ -129,9 +136,35 @@ Os testes de interface utilizam o **SauceDemo** para validar fluxos de autentica
 | E2E / UI | 6 | 6 | 0 |
 | **Total** | **13** | **13** | **0** |
 
-**Resultado: 100% dos testes executados com sucesso.**
+**Resultado: 13/13 testes executados com sucesso.**
 
 A suíte pode ser executada em modo headless e gera evidências em vídeo automaticamente por meio do Cypress.
+
+---
+
+## 🔄 Integração Contínua
+
+O projeto utiliza **GitHub Actions** para executar automaticamente a suíte de testes Cypress.
+
+O workflow realiza:
+
+- Checkout do repositório
+- Configuração do ambiente Node.js
+- Instalação das dependências
+- Execução automatizada da suíte Cypress
+- Validação dos testes de API e E2E
+
+Na execução validada em CI:
+
+| Suíte | Testes | Aprovados | Falhas |
+|---|---:|---:|---:|
+| API REST | 7 | 7 | 0 |
+| E2E / UI | 6 | 6 | 0 |
+| **Total** | **13** | **13** | **0** |
+
+**Status da suíte no GitHub Actions: 13/13 testes aprovados.**
+
+O status mais recente do workflow também pode ser acompanhado pelo badge exibido no início deste README.
 
 ---
 
@@ -173,13 +206,13 @@ npx cypress run --spec "cypress/e2e/fluxo_ecommerce.cy.js"
 - Cenários positivos e negativos
 - Ausência de esperas fixas (`cy.wait`) nos fluxos E2E
 - Versionamento com Git
+- Integração contínua com GitHub Actions
 - Organização voltada à manutenção e expansão da suíte
 
 ---
 
 ## 🔄 Próximas Evoluções
 
-- Integração contínua com GitHub Actions
 - Geração de relatórios automatizados de execução
 - Evolução das métricas de qualidade da suíte
 - Ampliação gradual da cobertura de regressão
