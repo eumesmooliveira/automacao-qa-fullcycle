@@ -1,58 +1,34 @@
-describe('Testes de API - Restful-Booker Suite', () => {
-  const baseUrl = 'https://restful-booker.herokuapp.com';
+import BookingService from '../services/BookingService';
 
-  const credentials = {
-    username: 'admin',
-    password: 'password123'
-  };
+describe('Testes de API - Restful-Booker Suite', () => {
+  let booking;
+
+  before(() => {
+    cy.fixture('booking').then((data) => {
+      booking = data;
+    });
+  });
 
   const createBookingData = (overrides = {}) => ({
-    firstname: 'Felipe',
-    lastname: 'Oliveira',
-    totalprice: 1500,
-    depositpaid: true,
-    bookingdates: {
-      checkin: '2026-09-20',
-      checkout: '2026-09-25'
-    },
-    additionalneeds: 'Breakfast',
+    ...booking.defaultBooking,
     ...overrides
   });
 
-  const createBooking = (bookingData) => {
-    return cy.request({
-      method: 'POST',
-      url: `${baseUrl}/booking`,
-      body: bookingData
-    });
-  };
-
-  const authenticate = () => {
-    return cy.request({
-      method: 'POST',
-      url: `${baseUrl}/auth`,
-      body: credentials
-    });
-  };
-
   describe('Autenticação', () => {
     it('CT03 - Deve gerar um token de autenticação com sucesso', () => {
-      authenticate().then((response) => {
+      BookingService.authenticate(
+        booking.credentials.valid
+      ).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('token');
       });
     });
 
     it('CT05 - Não deve autenticar com credenciais inválidas', () => {
-      cy.request({
-        method: 'POST',
-        url: `${baseUrl}/auth`,
-        failOnStatusCode: false,
-        body: {
-          username: 'usuario_invalido',
-          password: 'senha_invalida'
-        }
-      }).then((response) => {
+      BookingService.authenticate(
+        booking.credentials.invalid,
+        false
+      ).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('reason');
         expect(response.body.reason).to.eq('Bad credentials');
@@ -71,25 +47,25 @@ describe('Testes de API - Restful-Booker Suite', () => {
         }
       });
 
-      createBooking(bookingData).then((response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('bookingid');
-        expect(response.body).to.have.property('booking');
+      BookingService.createBooking(bookingData)
+        .then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('bookingid');
+          expect(response.body).to.have.property('booking');
 
-        expect(response.body.booking.firstname)
-          .to.eq(bookingData.firstname);
+          expect(response.body.booking.firstname)
+            .to.eq(bookingData.firstname);
 
-        expect(response.body.booking.totalprice)
-          .to.eq(bookingData.totalprice);
-      });
+          expect(response.body.booking.totalprice)
+            .to.eq(bookingData.totalprice);
+        });
     });
 
     it('CT06 - Deve retornar erro ao consultar uma reserva inexistente', () => {
-      cy.request({
-        method: 'GET',
-        url: `${baseUrl}/booking/999999999`,
-        failOnStatusCode: false
-      }).then((response) => {
+      BookingService.getBooking(
+        999999999,
+        false
+      ).then((response) => {
         expect(response.status).to.eq(404);
       });
     });
@@ -99,16 +75,16 @@ describe('Testes de API - Restful-Booker Suite', () => {
         totalprice: 1800
       });
 
-      createBooking(bookingData).then((createResponse) => {
-        expect(createResponse.status).to.eq(200);
-        expect(createResponse.body).to.have.property('bookingid');
+      BookingService.createBooking(bookingData)
+        .then((createResponse) => {
+          expect(createResponse.status).to.eq(200);
+          expect(createResponse.body).to.have.property('bookingid');
 
-        const bookingId = createResponse.body.bookingid;
+          const bookingId = createResponse.body.bookingid;
 
-        cy.request({
-          method: 'GET',
-          url: `${baseUrl}/booking/${bookingId}`
-        }).then((getResponse) => {
+          return BookingService.getBooking(bookingId);
+        })
+        .then((getResponse) => {
           expect(getResponse.status).to.eq(200);
 
           expect(getResponse.body.firstname)
@@ -132,7 +108,6 @@ describe('Testes de API - Restful-Booker Suite', () => {
           expect(getResponse.body.additionalneeds)
             .to.eq(bookingData.additionalneeds);
         });
-      });
     });
   });
 
@@ -146,16 +121,12 @@ describe('Testes de API - Restful-Booker Suite', () => {
         }
       });
 
-      cy.request({
-        method: 'PUT',
-        url: `${baseUrl}/booking/1`,
-        failOnStatusCode: false,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: bookingData
-      }).then((response) => {
+      BookingService.updateBooking(
+        1,
+        bookingData,
+        null,
+        false
+      ).then((response) => {
         expect(response.status).to.eq(403);
       });
     });
@@ -176,14 +147,14 @@ describe('Testes de API - Restful-Booker Suite', () => {
         additionalneeds: 'Dinner'
       });
 
-      authenticate()
+      BookingService.authenticate(booking.credentials.valid)
         .then((authResponse) => {
           expect(authResponse.status).to.eq(200);
           expect(authResponse.body).to.have.property('token');
 
           token = authResponse.body.token;
 
-          return createBooking(originalBooking);
+          return BookingService.createBooking(originalBooking);
         })
         .then((createResponse) => {
           expect(createResponse.status).to.eq(200);
@@ -191,16 +162,11 @@ describe('Testes de API - Restful-Booker Suite', () => {
 
           bookingId = createResponse.body.bookingid;
 
-          return cy.request({
-            method: 'PUT',
-            url: `${baseUrl}/booking/${bookingId}`,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Cookie': `token=${token}`
-            },
-            body: updatedBooking
-          });
+          return BookingService.updateBooking(
+            bookingId,
+            updatedBooking,
+            token
+          );
         })
         .then((updateResponse) => {
           expect(updateResponse.status).to.eq(200);
