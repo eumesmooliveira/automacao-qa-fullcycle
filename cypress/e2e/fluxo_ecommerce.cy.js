@@ -21,7 +21,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
 
   describe('Autenticação', () => {
     it('CT02 - Deve exibir mensagem de erro ao tentar logar com senha inválida', () => {
-      LoginPage.login(
+      cy.login(
         users.invalid.username,
         users.invalid.password
       );
@@ -32,7 +32,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
     });
 
     it('CT10 - Deve impedir login de usuário bloqueado', () => {
-      LoginPage.login(
+      cy.login(
         users.locked.username,
         users.locked.password
       );
@@ -47,7 +47,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
 
   describe('Fluxo de compra', () => {
     it('CT01 - Deve realizar login e concluir a compra com sucesso (Happy Path)', () => {
-      LoginPage.login(
+      cy.login(
         users.standard.username,
         users.standard.password
       );
@@ -78,7 +78,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
     });
 
     it('CT11 - Deve adicionar e remover um produto do carrinho', () => {
-      LoginPage.login(
+      cy.login(
         users.standard.username,
         users.standard.password
       );
@@ -97,7 +97,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
     });
 
     it('CT12 - Deve validar campos obrigatórios no checkout', () => {
-      LoginPage.login(
+      cy.login(
         users.standard.username,
         users.standard.password
       );
@@ -140,7 +140,7 @@ describe('Automação E2E - Full-Cycle QA Suite', () => {
     });
 
     it('CT13 - Deve adicionar múltiplos produtos e validar o carrinho', () => {
-      LoginPage.login(
+      cy.login(
         users.standard.username,
         users.standard.password
       );

@@ -4,15 +4,23 @@ class LoginPage {
   }
 
   fillUsername(username) {
-    cy.get('#user-name').type(username);
+    cy.get('#user-name')
+      .should('be.visible')
+      .clear()
+      .type(username);
   }
 
   fillPassword(password) {
-    cy.get('#password').type(password);
+    cy.get('#password')
+      .should('be.visible')
+      .clear()
+      .type(password, { log: false });
   }
 
   clickLogin() {
-    cy.get('#login-button').click();
+    cy.get('#login-button')
+      .should('be.visible')
+      .click();
   }
 
   login(username = 'standard_user', password = 'secret_sauce') {
