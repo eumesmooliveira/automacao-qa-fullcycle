@@ -194,4 +194,48 @@ describe('Testes de API - Restful-Booker Suite', () => {
         });
     });
   });
+
+  describe('Exclusão de reservas', () => {
+    it('CT14 - Deve excluir uma reserva utilizando autenticação e ID dinâmico', () => {
+      let token;
+      let bookingId;
+
+      const bookingData = createBookingData({
+        totalprice: 2500,
+        additionalneeds: 'Lunch'
+      });
+
+      BookingService.authenticate(booking.credentials.valid)
+        .then((authResponse) => {
+          expect(authResponse.status).to.eq(200);
+          expect(authResponse.body).to.have.property('token');
+
+          token = authResponse.body.token;
+
+          return BookingService.createBooking(bookingData);
+        })
+        .then((createResponse) => {
+          expect(createResponse.status).to.eq(200);
+          expect(createResponse.body).to.have.property('bookingid');
+
+          bookingId = createResponse.body.bookingid;
+
+          return BookingService.deleteBooking(
+            bookingId,
+            token
+          );
+        })
+        .then((deleteResponse) => {
+          expect(deleteResponse.status).to.eq(201);
+
+          return BookingService.getBooking(
+            bookingId,
+            false
+          );
+        })
+        .then((getResponse) => {
+          expect(getResponse.status).to.eq(404);
+        });
+    });
+  });
 });

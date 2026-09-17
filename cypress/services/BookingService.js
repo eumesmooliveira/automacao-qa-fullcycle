@@ -28,7 +28,12 @@ class BookingService {
     });
   }
 
-  updateBooking(bookingId, bookingData, token, failOnStatusCode = true) {
+  updateBooking(
+    bookingId,
+    bookingData,
+    token,
+    failOnStatusCode = true
+  ) {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json'
@@ -44,6 +49,23 @@ class BookingService {
       failOnStatusCode,
       headers,
       body: bookingData
+    });
+  }
+
+  deleteBooking(
+    bookingId,
+    token,
+    failOnStatusCode = true
+  ) {
+    return cy.request({
+      method: 'DELETE',
+      url: `${this.baseUrl}/booking/${bookingId}`,
+      failOnStatusCode,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Cookie: `token=${token}`
+      }
     });
   }
 }
