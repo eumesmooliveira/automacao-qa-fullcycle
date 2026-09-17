@@ -2,11 +2,13 @@
 
 [![Cypress Tests](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml/badge.svg)](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml)
 
-Projeto de Quality Assurance desenvolvido para demonstrar um fluxo completo de automação de testes, envolvendo planejamento, definição de cenários, automação de API e interface, execução de regressão, integração contínua e geração automatizada de relatórios e evidências.
+Projeto de Quality Assurance desenvolvido para demonstrar um fluxo completo de automação de testes, envolvendo planejamento, definição de cenários, automação de API e interface, arquitetura Page Object Model, execução de regressão, integração contínua e geração automatizada de relatórios e evidências.
 
-A suíte utiliza **Cypress e JavaScript** e possui **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
+A suíte utiliza **Cypress e JavaScript** e possui atualmente **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
 
-As execuções são integradas ao **GitHub Actions**, com geração automática de relatório HTML através do **Mochawesome** e armazenamento das evidências como artifacts do pipeline.
+As execuções são integradas ao **GitHub Actions**, com geração automática de relatório HTML através do **Mochawesome** e armazenamento do relatório como artifact do pipeline.
+
+> **13 testes automatizados | E2E + API | Page Object Model | CI/CD | Mochawesome**
 
 ---
 
@@ -19,6 +21,7 @@ Demonstrar na prática conhecimentos aplicados ao processo de Quality Assurance,
 - automação de testes de API REST;
 - validação de cenários positivos e negativos;
 - utilização de dados dinâmicos durante os testes;
+- organização da automação E2E com Page Object Model;
 - execução automatizada da suíte;
 - integração contínua;
 - geração de relatórios e evidências;
@@ -28,10 +31,11 @@ O projeto foi estruturado como uma suíte de regressão automatizada, permitindo
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias e Práticas Utilizadas
 
 - **JavaScript / Node.js** — linguagem e ambiente de execução
 - **Cypress** — automação de testes E2E e API
+- **Page Object Model (POM)** — organização e separação das responsabilidades dos testes E2E
 - **REST / JSON** — validação de serviços e dados retornados
 - **Mochawesome** — geração automatizada de relatórios HTML
 - **GitHub Actions** — integração contínua e execução automatizada da suíte
@@ -49,10 +53,12 @@ Aplicação utilizada para automação dos fluxos E2E relacionados a:
 - autenticação;
 - validação de credenciais inválidas;
 - bloqueio de usuário;
+- catálogo de produtos;
 - carrinho de compras;
 - checkout;
 - validação de campos obrigatórios;
-- manipulação de múltiplos produtos.
+- manipulação de múltiplos produtos;
+- conclusão de compra.
 
 ### API — Restful-Booker
 
@@ -64,7 +70,7 @@ API utilizada para automação e validação de:
 - cenários negativos;
 - autorização;
 - atualização de dados;
-- utilização de IDs dinâmicos.
+- utilização de IDs e tokens dinâmicos.
 
 ---
 
@@ -99,6 +105,37 @@ A suíte possui atualmente **13 testes automatizados**, sendo:
 
 ---
 
+## 🏗️ Arquitetura da Automação E2E
+
+Os testes E2E utilizam o padrão **Page Object Model (POM)** para separar os cenários de teste das interações específicas com cada página da aplicação.
+
+Essa organização centraliza seletores e ações reutilizáveis, reduz duplicações e facilita a manutenção da suíte.
+
+```text
+fluxo_ecommerce.cy.js
+        │
+        ├── LoginPage
+        │
+        ├── InventoryPage
+        │
+        ├── CartPage
+        │
+        └── CheckoutPage
+```
+
+### Page Objects
+
+| Page Object | Responsabilidade |
+|---|---|
+| `LoginPage.js` | Login e validação de erros de autenticação |
+| `InventoryPage.js` | Produtos, adição ao carrinho e contador de itens |
+| `CartPage.js` | Validação, remoção de produtos e início do checkout |
+| `CheckoutPage.js` | Dados do checkout, validações, finalização e confirmação da compra |
+
+Com essa estrutura, os arquivos de teste ficam concentrados na descrição do comportamento esperado, enquanto os detalhes de interação com a interface permanecem encapsulados nos Page Objects.
+
+---
+
 ## 📁 Estrutura do Projeto
 
 ```text
@@ -113,13 +150,17 @@ automacao-qa-fullcycle/
 │   │   ├── api_restful_booker.cy.js
 │   │   └── fluxo_ecommerce.cy.js
 │   │
-│   ├── fixtures/
-│   ├── support/
-│   │   ├── commands.js
-│   │   └── e2e.js
+│   ├── pages/
+│   │   ├── LoginPage.js
+│   │   ├── InventoryPage.js
+│   │   ├── CartPage.js
+│   │   └── CheckoutPage.js
 │   │
-│   ├── reports/
-│   └── videos/
+│   ├── fixtures/
+│   │
+│   └── support/
+│       ├── commands.js
+│       └── e2e.js
 │
 ├── docs/
 │   └── relatorios_bugs/
@@ -131,6 +172,8 @@ automacao-qa-fullcycle/
 ├── package-lock.json
 └── README.md
 ```
+
+Os diretórios `cypress/reports/`, `cypress/videos/` e `cypress/screenshots/` são utilizados para artefatos gerados durante as execuções e não são versionados no repositório.
 
 ---
 
@@ -174,6 +217,18 @@ Para abrir o Cypress em modo interativo:
 npx cypress open
 ```
 
+Para executar somente os testes de API:
+
+```bash
+npx cypress run --spec "cypress/e2e/api_restful_booker.cy.js"
+```
+
+Para executar somente os testes E2E:
+
+```bash
+npx cypress run --spec "cypress/e2e/fluxo_ecommerce.cy.js"
+```
+
 ---
 
 ## ✅ Resultado da Execução
@@ -197,7 +252,7 @@ TOTAL
 0 falhas
 ```
 
-**Taxa de sucesso da execução: 100%.**
+**Taxa de sucesso da execução documentada: 100%.**
 
 Os testes cobrem cenários positivos e negativos nas camadas de API e interface.
 
@@ -222,7 +277,9 @@ Após uma execução local, o relatório é gerado em:
 cypress/reports/index.html
 ```
 
-As execuções E2E também geram evidências em vídeo automaticamente pelo Cypress.
+As execuções também podem gerar evidências em vídeo através do Cypress.
+
+Relatórios, vídeos e screenshots são tratados como artefatos de execução e permanecem fora do versionamento do código-fonte.
 
 ---
 
@@ -261,7 +318,7 @@ Ao final da execução, o relatório Mochawesome é disponibilizado como um arti
 mochawesome-report
 ```
 
-Isso permite consultar as evidências e os resultados gerados durante a execução do workflow.
+Isso permite consultar os resultados e evidências gerados durante a execução do workflow.
 
 ---
 
@@ -303,12 +360,12 @@ Criar reserva
       ↓
 Capturar ID retornado
       ↓
-Utilizar o ID na consulta
+Utilizar o ID na consulta/atualização
       ↓
-Validar os dados
+Validar os dados retornados
 ```
 
-Esse fluxo reduz a dependência de dados previamente cadastrados e torna os testes mais independentes.
+Esse fluxo reduz a dependência de registros previamente cadastrados e torna os cenários mais independentes.
 
 ---
 
@@ -317,16 +374,21 @@ Esse fluxo reduz a dependência de dados previamente cadastrados e torna os test
 Durante o desenvolvimento da suíte foram aplicadas práticas como:
 
 - separação entre testes de API e interface;
-- organização dos testes por contexto;
+- organização dos testes por contexto e responsabilidade;
+- utilização de **Page Object Model** nos fluxos E2E;
+- encapsulamento de seletores e interações de interface;
+- redução de duplicação de código;
+- reutilização de métodos entre cenários;
 - utilização de cenários positivos e negativos;
+- assertions em diferentes etapas dos fluxos;
 - validação de status HTTP e dados retornados;
-- reutilização de dados gerados durante a execução;
-- uso de IDs e tokens dinâmicos;
+- utilização de IDs e tokens dinâmicos;
+- ausência de esperas fixas desnecessárias nos fluxos E2E;
 - execução headless da suíte;
-- geração de evidências em vídeo;
 - integração contínua com GitHub Actions;
 - geração automatizada de relatórios;
-- armazenamento de relatórios como artifacts do pipeline;
+- armazenamento do relatório como artifact do pipeline;
+- separação dos artefatos gerados do código versionado;
 - documentação dos cenários e resultados;
 - versionamento com Git.
 
@@ -340,7 +402,7 @@ Além do relatório automatizado gerado pelo Mochawesome, o projeto possui docum
 docs/relatorios_bugs/relatorio_execucao.md
 ```
 
-O documento registra as métricas da execução e os cenários contemplados pela suíte.
+O documento registra métricas da execução e os cenários contemplados pela suíte.
 
 ---
 
@@ -348,12 +410,13 @@ O documento registra as métricas da execução e os cenários contemplados pela
 
 O projeto pode continuar evoluindo através de:
 
+- maior utilização de **fixtures** para gerenciamento de massas de teste;
+- criação de **Custom Commands** para comportamentos compartilhados quando aplicável;
 - ampliação gradual da cobertura de regressão;
-- implementação de Page Object Model nos fluxos E2E;
-- maior utilização de fixtures para gerenciamento de massas de teste;
+- inclusão de novos cenários de API e interface;
 - execução da suíte em múltiplos navegadores;
-- evolução das métricas e relatórios de qualidade;
-- inclusão de novos cenários de API e interface.
+- organização de execuções por grupos ou suítes;
+- evolução das métricas e relatórios de qualidade.
 
 ---
 
