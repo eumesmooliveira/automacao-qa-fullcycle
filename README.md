@@ -2,13 +2,13 @@
 
 [![Cypress Tests](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml/badge.svg)](https://github.com/eumesmooliveira/automacao-qa-fullcycle/actions/workflows/cypress-tests.yml)
 
-Projeto de Quality Assurance desenvolvido para demonstrar um fluxo completo de automação de testes, envolvendo planejamento, definição de cenários, automação de API e interface, arquitetura Page Object Model, execução de regressão, integração contínua e geração automatizada de relatórios e evidências.
+Projeto de Quality Assurance desenvolvido para demonstrar um fluxo completo de automação de testes, envolvendo planejamento, definição de cenários, automação de API e interface, arquitetura Page Object Model, gerenciamento de massas de teste com fixtures, execução de regressão, testes cross-browser, integração contínua e geração automatizada de relatórios e evidências.
 
 A suíte utiliza **Cypress e JavaScript** e possui atualmente **13 testes automatizados**, distribuídos entre testes de API REST e testes E2E de interface.
 
-As execuções são integradas ao **GitHub Actions**, com geração automática de relatório HTML através do **Mochawesome** e armazenamento do relatório como artifact do pipeline.
+As execuções são integradas ao **GitHub Actions**, com execução automática em **Google Chrome e Mozilla Firefox**, geração de relatórios HTML através do **Mochawesome** e armazenamento dos relatórios como artifacts do pipeline.
 
-> **13 testes automatizados | E2E + API | Page Object Model | CI/CD | Mochawesome**
+> **13 testes automatizados | E2E + API | Page Object Model | Fixtures | Cross-Browser | CI/CD | Mochawesome**
 
 ---
 
@@ -22,7 +22,9 @@ Demonstrar na prática conhecimentos aplicados ao processo de Quality Assurance,
 - validação de cenários positivos e negativos;
 - utilização de dados dinâmicos durante os testes;
 - organização da automação E2E com Page Object Model;
+- gerenciamento de massas de teste através de fixtures;
 - execução automatizada da suíte;
+- execução cross-browser;
 - integração contínua;
 - geração de relatórios e evidências;
 - documentação dos resultados.
@@ -36,9 +38,11 @@ O projeto foi estruturado como uma suíte de regressão automatizada, permitindo
 - **JavaScript / Node.js** — linguagem e ambiente de execução
 - **Cypress** — automação de testes E2E e API
 - **Page Object Model (POM)** — organização e separação das responsabilidades dos testes E2E
+- **Cypress Fixtures** — gerenciamento e reutilização de massas de teste
 - **REST / JSON** — validação de serviços e dados retornados
 - **Mochawesome** — geração automatizada de relatórios HTML
 - **GitHub Actions** — integração contínua e execução automatizada da suíte
+- **Matrix Strategy** — execução dos testes em múltiplos navegadores
 - **Git / GitHub** — versionamento e hospedagem do projeto
 - **Markdown** — documentação dos cenários e resultados
 
@@ -46,21 +50,23 @@ O projeto foi estruturado como uma suíte de regressão automatizada, permitindo
 
 ## 🧪 Aplicações Testadas
 
-### UI — SauceDemo
+### 🖥️ UI — SauceDemo
 
 Aplicação utilizada para automação dos fluxos E2E relacionados a:
 
 - autenticação;
 - validação de credenciais inválidas;
 - bloqueio de usuário;
-- catálogo de produtos;
 - carrinho de compras;
 - checkout;
 - validação de campos obrigatórios;
-- manipulação de múltiplos produtos;
-- conclusão de compra.
+- manipulação de múltiplos produtos.
 
-### API — Restful-Booker
+Os testes E2E utilizam **Page Object Model** para separar as ações e validações de cada página dos cenários de teste.
+
+Os dados utilizados nos cenários, como usuários e informações de checkout, são armazenados em **fixtures**, reduzindo dados hardcoded nos arquivos de teste e facilitando a manutenção da suíte.
+
+### 🔌 API — Restful-Booker
 
 API utilizada para automação e validação de:
 
@@ -70,7 +76,7 @@ API utilizada para automação e validação de:
 - cenários negativos;
 - autorização;
 - atualização de dados;
-- utilização de IDs e tokens dinâmicos.
+- utilização de IDs dinâmicos.
 
 ---
 
@@ -105,34 +111,59 @@ A suíte possui atualmente **13 testes automatizados**, sendo:
 
 ---
 
-## 🏗️ Arquitetura da Automação E2E
+## 🏗️ Arquitetura dos Testes E2E
 
-Os testes E2E utilizam o padrão **Page Object Model (POM)** para separar os cenários de teste das interações específicas com cada página da aplicação.
+Os testes de interface utilizam o padrão **Page Object Model (POM)** para separar as responsabilidades entre os cenários de teste e as interações com as páginas da aplicação.
 
-Essa organização centraliza seletores e ações reutilizáveis, reduz duplicações e facilita a manutenção da suíte.
+Atualmente, a estrutura possui os seguintes Page Objects:
+
+```text
+cypress/pages/
+
+├── LoginPage.js
+├── InventoryPage.js
+├── CartPage.js
+└── CheckoutPage.js
+```
+
+Cada Page Object concentra ações e validações relacionadas à sua respectiva página.
+
+Exemplo conceitual:
 
 ```text
 fluxo_ecommerce.cy.js
         │
         ├── LoginPage
-        │
         ├── InventoryPage
-        │
         ├── CartPage
-        │
         └── CheckoutPage
 ```
 
-### Page Objects
+Essa abordagem reduz duplicação de código e facilita a manutenção e evolução dos testes E2E.
 
-| Page Object | Responsabilidade |
-|---|---|
-| `LoginPage.js` | Login e validação de erros de autenticação |
-| `InventoryPage.js` | Produtos, adição ao carrinho e contador de itens |
-| `CartPage.js` | Validação, remoção de produtos e início do checkout |
-| `CheckoutPage.js` | Dados do checkout, validações, finalização e confirmação da compra |
+---
 
-Com essa estrutura, os arquivos de teste ficam concentrados na descrição do comportamento esperado, enquanto os detalhes de interação com a interface permanecem encapsulados nos Page Objects.
+## 📦 Gerenciamento de Massas de Teste
+
+Os dados utilizados nos cenários E2E são separados da lógica dos testes através de **Cypress Fixtures**.
+
+Atualmente são utilizadas as seguintes massas:
+
+```text
+cypress/fixtures/
+
+├── users.json
+└── checkout.json
+```
+
+As fixtures armazenam informações utilizadas durante os cenários, como:
+
+- usuários válidos;
+- usuários bloqueados;
+- credenciais inválidas;
+- informações utilizadas no checkout.
+
+Essa separação reduz dados hardcoded nos arquivos de teste e facilita a reutilização e manutenção das massas.
 
 ---
 
@@ -150,17 +181,22 @@ automacao-qa-fullcycle/
 │   │   ├── api_restful_booker.cy.js
 │   │   └── fluxo_ecommerce.cy.js
 │   │
-│   ├── pages/
-│   │   ├── LoginPage.js
-│   │   ├── InventoryPage.js
-│   │   ├── CartPage.js
-│   │   └── CheckoutPage.js
-│   │
 │   ├── fixtures/
+│   │   ├── checkout.json
+│   │   └── users.json
 │   │
-│   └── support/
-│       ├── commands.js
-│       └── e2e.js
+│   ├── pages/
+│   │   ├── CartPage.js
+│   │   ├── CheckoutPage.js
+│   │   ├── InventoryPage.js
+│   │   └── LoginPage.js
+│   │
+│   ├── support/
+│   │   ├── commands.js
+│   │   └── e2e.js
+│   │
+│   ├── reports/
+│   └── videos/
 │
 ├── docs/
 │   └── relatorios_bugs/
@@ -173,7 +209,7 @@ automacao-qa-fullcycle/
 └── README.md
 ```
 
-Os diretórios `cypress/reports/`, `cypress/videos/` e `cypress/screenshots/` são utilizados para artefatos gerados durante as execuções e não são versionados no repositório.
+> As pastas `cypress/reports/` e `cypress/videos/` são geradas durante as execuções e não são versionadas no repositório.
 
 ---
 
@@ -217,16 +253,18 @@ Para abrir o Cypress em modo interativo:
 npx cypress open
 ```
 
-Para executar somente os testes de API:
+### Execução em navegador específico
+
+Chrome:
 
 ```bash
-npx cypress run --spec "cypress/e2e/api_restful_booker.cy.js"
+npx cypress run --browser chrome
 ```
 
-Para executar somente os testes E2E:
+Firefox:
 
 ```bash
-npx cypress run --spec "cypress/e2e/fluxo_ecommerce.cy.js"
+npx cypress run --browser firefox
 ```
 
 ---
@@ -252,17 +290,62 @@ TOTAL
 0 falhas
 ```
 
-**Taxa de sucesso da execução documentada: 100%.**
+**Taxa de sucesso da execução: 100%.**
 
 Os testes cobrem cenários positivos e negativos nas camadas de API e interface.
+
+No pipeline de CI, a mesma suíte é executada independentemente em **Chrome e Firefox**, resultando em **26 execuções de casos de teste por pipeline**:
+
+```text
+Chrome
+13 testes
+
+Firefox
+13 testes
+
+TOTAL NO PIPELINE
+26 execuções de casos de teste
+```
+
+Os 13 cenários continuam sendo os mesmos; a execução em dois navegadores permite validar o comportamento da suíte em diferentes ambientes.
+
+---
+
+## 🌐 Cross-Browser Testing
+
+A integração contínua utiliza uma **matrix strategy** do GitHub Actions para executar a suíte em múltiplos navegadores.
+
+Atualmente são utilizados:
+
+| Navegador | Testes executados |
+|---|---:|
+| Google Chrome | 13 |
+| Mozilla Firefox | 13 |
+| **Total por pipeline** | **26 execuções** |
+
+Os navegadores são executados em jobs independentes:
+
+```text
+GitHub Actions
+      │
+      └── Matrix Strategy
+             │
+             ├── Chrome
+             │    └── 13 testes
+             │
+             └── Firefox
+                  └── 13 testes
+```
+
+A configuração com `fail-fast: false` permite que os jobs da matrix sejam executados independentemente, facilitando a identificação de eventuais diferenças de comportamento entre os navegadores.
 
 ---
 
 ## 📊 Relatórios e Evidências
 
-A suíte utiliza o **Mochawesome** para gerar automaticamente um relatório HTML após a execução dos testes.
+A suíte utiliza o **Mochawesome** para gerar automaticamente relatórios HTML após a execução dos testes.
 
-O relatório apresenta informações como:
+Os relatórios apresentam informações como:
 
 - quantidade de testes executados;
 - testes aprovados e reprovados;
@@ -277,9 +360,9 @@ Após uma execução local, o relatório é gerado em:
 cypress/reports/index.html
 ```
 
-As execuções também podem gerar evidências em vídeo através do Cypress.
+As execuções E2E também geram evidências em vídeo automaticamente pelo Cypress.
 
-Relatórios, vídeos e screenshots são tratados como artefatos de execução e permanecem fora do versionamento do código-fonte.
+Esses arquivos são tratados como evidências geradas durante a execução e não são mantidos no controle de versão.
 
 ---
 
@@ -292,7 +375,12 @@ O workflow é executado automaticamente em:
 - `push` para a branch `main`;
 - `pull_request` direcionado para a branch `main`.
 
-Durante o pipeline são realizadas as seguintes etapas:
+A suíte utiliza uma **matrix strategy** para executar os testes automaticamente em:
+
+- Google Chrome;
+- Mozilla Firefox.
+
+O fluxo do pipeline é:
 
 ```text
 Push / Pull Request
@@ -303,22 +391,29 @@ Configuração do Node.js
         ↓
 Instalação das dependências
         ↓
-Execução da suíte Cypress
-        ↓
-Geração do relatório Mochawesome
-        ↓
-Upload do relatório como Artifact
+Matrix de navegadores
+       ↙           ↘
+   Chrome        Firefox
+     ↓              ↓
+  13 testes      13 testes
+     ↓              ↓
+Mochawesome     Mochawesome
+     ↘              ↙
+ GitHub Actions Artifacts
 ```
 
-O pipeline executa os **13 testes automatizados** em ambiente de integração contínua.
+Cada navegador executa os **13 testes automatizados**, totalizando **26 execuções de casos de teste por pipeline**.
 
-Ao final da execução, o relatório Mochawesome é disponibilizado como um artifact chamado:
+Ao final da execução, os relatórios Mochawesome são disponibilizados separadamente como artifacts:
 
 ```text
-mochawesome-report
+mochawesome-report-chrome
+mochawesome-report-firefox
 ```
 
-Isso permite consultar os resultados e evidências gerados durante a execução do workflow.
+Os artifacts são mantidos pelo workflow por **30 dias**.
+
+Essa estratégia permite consultar separadamente os resultados e evidências produzidos em cada navegador.
 
 ---
 
@@ -360,12 +455,30 @@ Criar reserva
       ↓
 Capturar ID retornado
       ↓
-Utilizar o ID na consulta/atualização
+Utilizar o ID na consulta
       ↓
-Validar os dados retornados
+Validar os dados
 ```
 
-Esse fluxo reduz a dependência de registros previamente cadastrados e torna os cenários mais independentes.
+Esse fluxo reduz a dependência de dados previamente cadastrados e torna os testes mais independentes.
+
+### Massas de teste
+
+Nos testes E2E, dados reutilizáveis são armazenados em fixtures:
+
+```text
+Fixture
+   ↓
+Carregamento dos dados
+   ↓
+Cenário E2E
+   ↓
+Page Objects
+   ↓
+Aplicação
+```
+
+Dessa forma, a lógica do cenário permanece separada dos dados utilizados durante a execução.
 
 ---
 
@@ -374,21 +487,23 @@ Esse fluxo reduz a dependência de registros previamente cadastrados e torna os 
 Durante o desenvolvimento da suíte foram aplicadas práticas como:
 
 - separação entre testes de API e interface;
-- organização dos testes por contexto e responsabilidade;
-- utilização de **Page Object Model** nos fluxos E2E;
-- encapsulamento de seletores e interações de interface;
-- redução de duplicação de código;
-- reutilização de métodos entre cenários;
+- organização dos testes por contexto;
+- utilização de Page Object Model nos testes E2E;
+- separação das responsabilidades entre páginas e cenários;
+- utilização de fixtures para gerenciamento das massas de teste;
 - utilização de cenários positivos e negativos;
-- assertions em diferentes etapas dos fluxos;
 - validação de status HTTP e dados retornados;
-- utilização de IDs e tokens dinâmicos;
-- ausência de esperas fixas desnecessárias nos fluxos E2E;
+- reutilização de dados gerados durante a execução;
+- uso de IDs e tokens dinâmicos;
 - execução headless da suíte;
+- execução cross-browser em Chrome e Firefox;
+- utilização de matrix strategy no GitHub Actions;
+- geração de evidências em vídeo;
 - integração contínua com GitHub Actions;
 - geração automatizada de relatórios;
-- armazenamento do relatório como artifact do pipeline;
-- separação dos artefatos gerados do código versionado;
+- geração de relatórios independentes por navegador no CI;
+- armazenamento de relatórios como artifacts do pipeline;
+- exclusão de arquivos gerados automaticamente do versionamento;
 - documentação dos cenários e resultados;
 - versionamento com Git.
 
@@ -396,13 +511,13 @@ Durante o desenvolvimento da suíte foram aplicadas práticas como:
 
 ## 📈 Relatório do Ciclo de Testes
 
-Além do relatório automatizado gerado pelo Mochawesome, o projeto possui documentação do ciclo de execução em:
+Além dos relatórios automatizados gerados pelo Mochawesome, o projeto possui documentação do ciclo de execução em:
 
 ```text
 docs/relatorios_bugs/relatorio_execucao.md
 ```
 
-O documento registra métricas da execução e os cenários contemplados pela suíte.
+O documento registra as métricas da execução e os cenários contemplados pela suíte.
 
 ---
 
@@ -410,13 +525,14 @@ O documento registra métricas da execução e os cenários contemplados pela su
 
 O projeto pode continuar evoluindo através de:
 
-- maior utilização de **fixtures** para gerenciamento de massas de teste;
-- criação de **Custom Commands** para comportamentos compartilhados quando aplicável;
 - ampliação gradual da cobertura de regressão;
-- inclusão de novos cenários de API e interface;
-- execução da suíte em múltiplos navegadores;
-- organização de execuções por grupos ou suítes;
-- evolução das métricas e relatórios de qualidade.
+- criação de novos cenários E2E;
+- expansão dos cenários de API;
+- evolução da camada de Page Objects;
+- criação de comandos customizados para comportamentos reutilizáveis;
+- evolução das métricas e relatórios de qualidade;
+- implementação de validações adicionais no pipeline;
+- aprimoramento da estratégia de gerenciamento de massas de teste.
 
 ---
 
