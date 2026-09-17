@@ -1,8 +1,8 @@
 import LoginPage from '../pages/LoginPage';
 
-Cypress.Commands.add(
-  'login',
-  (username = 'standard_user', password = 'secret_sauce') => {
-    LoginPage.login(username, password);
-  }
-);
+Cypress.Commands.add('login', (username, password) => {
+  LoginPage.visit();
+  LoginPage.fillUsername(username);
+  LoginPage.fillPassword(password);
+  LoginPage.clickLogin();
+});
