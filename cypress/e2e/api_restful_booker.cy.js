@@ -61,6 +61,19 @@ describe('Testes de API - Restful-Booker Suite', () => {
         });
     });
 
+    it('CT15 - Não deve criar uma reserva sem o campo obrigatório firstname', () => {
+      const invalidBookingData = createBookingData();
+
+      delete invalidBookingData.firstname;
+
+      BookingService.createBooking(
+        invalidBookingData,
+        false
+      ).then((response) => {
+        expect(response.status).to.eq(500);
+      });
+    });
+
     it('CT06 - Deve retornar erro ao consultar uma reserva inexistente', () => {
       BookingService.getBooking(
         999999999,

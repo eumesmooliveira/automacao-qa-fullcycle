@@ -12,10 +12,11 @@ class BookingService {
     });
   }
 
-  createBooking(bookingData) {
+  createBooking(bookingData, failOnStatusCode = true) {
     return cy.request({
       method: 'POST',
       url: `${this.baseUrl}/booking`,
+      failOnStatusCode,
       body: bookingData
     });
   }

@@ -4,13 +4,13 @@
 
 Projeto de automação de testes desenvolvido para demonstrar, na prática, a construção e evolução de uma suíte de **Quality Assurance**, envolvendo testes **E2E (UI)** e **API REST**, arquitetura de automação, gerenciamento de massas de teste, qualidade de código e integração contínua.
 
-A suíte utiliza **Cypress + JavaScript** e possui atualmente **14 casos de teste automatizados**, distribuídos entre testes de interface e API.
+A suíte utiliza **Cypress + JavaScript** e possui atualmente **15 casos de teste automatizados**, distribuídos entre testes de interface e API.
 
 O projeto aplica **Page Object Model**, **Custom Commands**, **Fixtures** e uma **Service Layer para testes de API**, além de executar validações de qualidade com **ESLint** antes dos testes no pipeline.
 
 No CI, a suíte é executada automaticamente em **Google Chrome e Mozilla Firefox** através do **GitHub Actions**, com geração de relatórios **Mochawesome** e armazenamento das evidências como artifacts.
 
-> **14 testes | E2E + API | POM | Service Layer | Fixtures | ESLint | Cross-Browser | CI | Mochawesome**
+> **15 testes | E2E + API | POM | Service Layer | Fixtures | ESLint | Cross-Browser | CI | Mochawesome**
 
 ---
 
@@ -18,11 +18,11 @@ No CI, a suíte é executada automaticamente em **Google Chrome e Mozilla Firefo
 
 | Suíte | Testes | Aprovados | Falhas |
 |---|---:|---:|---:|
-| API REST | 8 | 8 | 0 |
+| API REST | 9 | 9 | 0 |
 | E2E / UI | 6 | 6 | 0 |
-| **Total** | **14** | **14** | **0** |
+| **Total** | **15** | **15** | **0** |
 
-Os 14 casos de teste são executados em **Chrome e Firefox** no pipeline, resultando em **28 execuções de testes por workflow completo**.
+Os 15 casos de teste são executados em **Chrome e Firefox** no pipeline, resultando em **30 execuções de testes por workflow completo**.
 
 ---
 
@@ -46,7 +46,9 @@ A suíte demonstra práticas como:
 - análise estática de código com ESLint;
 - Quality Gate antes da execução dos testes;
 - integração contínua com GitHub Actions;
-- armazenamento de relatórios como artifacts.
+- armazenamento de relatórios como artifacts;
+- documentação de estratégia e arquitetura;
+- preservação de evidências selecionadas de execução.
 
 ---
 
@@ -181,6 +183,16 @@ Valida:
 - estrutura da resposta;
 - dados principais retornados.
 
+**CT15 — Não criar reserva sem o campo obrigatório `firstname`**
+
+Valida:
+
+- envio de uma requisição de criação sem o campo `firstname`;
+- tratamento de cenário negativo sem interromper automaticamente o teste por status HTTP;
+- retorno `500 Internal Server Error` apresentado pela Restful-Booker para essa entrada inválida.
+
+> O teste documenta o comportamento observado da API. Embora o cenário automatizado valide o retorno efetivamente apresentado pela aplicação, um erro `500` indica falha interna do servidor e não necessariamente a resposta ideal para uma validação de entrada.
+
 **CT06 — Consultar reserva inexistente**
 
 Valida:
@@ -261,7 +273,7 @@ Esse cenário completa o fluxo de operações principais da API utilizando dados
 
 # 🏗️ Arquitetura do Projeto
 
-O projeto separa responsabilidades entre specs, dados, componentes de interface e serviços de API.
+O projeto separa responsabilidades entre specs, dados, componentes de interface, serviços de API, documentação e evidências.
 
 ```text
 automacao-qa-fullcycle/
@@ -278,6 +290,7 @@ automacao-qa-fullcycle/
 │   ├── fixtures/
 │   │   ├── booking.json
 │   │   ├── checkout.json
+│   │   ├── example.json
 │   │   └── users.json
 │   │
 │   ├── pages/
@@ -293,12 +306,24 @@ automacao-qa-fullcycle/
 │       ├── commands.js
 │       └── e2e.js
 │
+├── docs/
+│   ├── evidence/
+│   │   ├── e2e-full-suite-success.mp4
+│   │   └── README.md
+│   ├── relatorios_bugs/
+│   │   └── relatorio_execucao.md
+│   ├── architecture.md
+│   └── test-strategy.md
+│
+├── .gitignore
 ├── cypress.config.js
 ├── eslint.config.js
 ├── package.json
 ├── package-lock.json
 └── README.md
 ```
+
+A documentação detalhada das decisões arquiteturais está disponível em [`docs/architecture.md`](docs/architecture.md).
 
 ---
 
@@ -358,6 +383,7 @@ As massas de teste ficam separadas da lógica de automação através de **Fixtu
 cypress/fixtures/
 ├── booking.json
 ├── checkout.json
+├── example.json
 └── users.json
 ```
 
@@ -399,6 +425,8 @@ api_restful_booker.cy.js
 O `BookingService` centraliza as requisições HTTP utilizadas pela suíte.
 
 Isso permite que o arquivo de testes permaneça focado nos **cenários e validações**, enquanto detalhes como endpoints, métodos HTTP, headers e autenticação ficam concentrados na camada de serviço.
+
+Os métodos que participam de cenários negativos também permitem controlar `failOnStatusCode`, possibilitando validar explicitamente respostas HTTP de erro esperadas sem que o Cypress interrompa o cenário automaticamente.
 
 ---
 
@@ -443,15 +471,15 @@ ESLint Quality Gate
         │
         └── Sucesso
               ↓
-       Matrix Strategy
-          /       \
-       Chrome    Firefox
-          │         │
-      Cypress    Cypress
-          │         │
+         Matrix Strategy
+           /       \
+        Chrome    Firefox
+           │         │
+        Cypress   Cypress
+           │         │
      Mochawesome Mochawesome
-          \         /
-           Artifacts
+           \         /
+            Artifacts
 ```
 
 O job de testes possui dependência do job de lint.
@@ -467,12 +495,12 @@ O pipeline utiliza uma estratégia de matriz para executar a suíte nos navegado
 - Google Chrome;
 - Mozilla Firefox.
 
-Cada navegador executa os **14 casos de teste**.
+Cada navegador executa os **15 casos de teste**.
 
 Portanto:
 
 ```text
-14 testes × 2 navegadores = 28 execuções
+15 testes × 2 navegadores = 30 execuções
 ```
 
 A estratégia utiliza `fail-fast: false`, permitindo que os resultados dos navegadores sejam obtidos independentemente.
@@ -497,11 +525,37 @@ cypress/reports/index.html
 
 Os relatórios apresentam informações como:
 
-- suites executadas;
+- suítes executadas;
 - testes aprovados;
 - testes com falha;
 - duração;
 - evidências da execução.
+
+Como os relatórios são regenerados automaticamente, `cypress/reports/` permanece fora do versionamento.
+
+---
+
+# 🎥 Evidências de Execução
+
+O Cypress gera vídeos das execuções automatizadas em:
+
+```text
+cypress/videos/
+```
+
+Esses arquivos são artefatos temporários e não são versionados.
+
+Para fins de documentação e portfólio, uma evidência selecionada da suíte E2E foi preservada em:
+
+[`docs/evidence/e2e-full-suite-success.mp4`](docs/evidence/e2e-full-suite-success.mp4)
+
+A evidência registra uma execução automatizada dos cenários E2E do SauceDemo.
+
+A documentação das evidências está disponível em:
+
+[`docs/evidence/README.md`](docs/evidence/README.md)
+
+> O vídeo representa a execução da suíte E2E. O resultado consolidado de **15 testes** inclui também os 9 cenários de API.
 
 ---
 
@@ -517,6 +571,21 @@ mochawesome-report-firefox
 ```
 
 Isso permite consultar as evidências produzidas por cada execução do pipeline.
+
+---
+
+# 📚 Documentação Técnica
+
+Além deste README, o projeto possui documentação técnica dedicada para facilitar a análise da estratégia, arquitetura e resultados da automação.
+
+| Documento | Conteúdo |
+|---|---|
+| [Estratégia de Testes](docs/test-strategy.md) | Escopo, cobertura, abordagem, cenários positivos e negativos e critérios adotados |
+| [Arquitetura da Automação](docs/architecture.md) | Estrutura, Page Object Model, Service Layer, Fixtures e decisões arquiteturais |
+| [Relatório de Execução](docs/relatorios_bugs/relatorio_execucao.md) | Resultado consolidado da execução da suíte |
+| [Evidências](docs/evidence/README.md) | Descrição das evidências selecionadas para o portfólio |
+
+Essa documentação complementa o código e permite compreender não apenas **o que foi automatizado**, mas também **como e por que a solução foi estruturada dessa forma**.
 
 ---
 
@@ -558,6 +627,12 @@ npm run lint
 
 ```bash
 npm test
+```
+
+Após a execução, o relatório Mochawesome estará disponível em:
+
+```text
+cypress/reports/index.html
 ```
 
 ---
@@ -631,9 +706,15 @@ Service Layer para API
     ↓
 CRUD de reservas
     ↓
+Validação negativa de campo obrigatório
+    ↓
 ESLint
     ↓
 Quality Gate
+    ↓
+Documentação técnica
+    ↓
+Evidências de execução
     ↓
 v1.0.0
 ```
@@ -660,11 +741,14 @@ Durante o desenvolvimento deste projeto foram aplicados conceitos de:
 - dados dinâmicos;
 - operações CRUD;
 - validação de status HTTP;
+- validação de campos obrigatórios;
 - análise estática de código;
 - Continuous Integration;
 - Quality Gates;
 - cross-browser testing;
-- geração de evidências e relatórios.
+- geração de evidências e relatórios;
+- documentação de estratégia de testes;
+- documentação de decisões arquiteturais.
 
 ---
 
@@ -672,16 +756,34 @@ Durante o desenvolvimento deste projeto foram aplicados conceitos de:
 
 A versão **v1.0.0** representa a consolidação da primeira versão estável da suíte.
 
-Nesta versão, o projeto demonstra uma estrutura completa de automação envolvendo:
+Nesta versão, o projeto demonstra uma estrutura de automação envolvendo:
 
-**UI + API + arquitetura + dados + qualidade de código + CI + cross-browser + relatórios.**
+**UI + API + arquitetura + dados + qualidade de código + CI + cross-browser + relatórios + documentação + evidências.**
 
-O objetivo da v1.0 não é concentrar o maior número possível de ferramentas, mas demonstrar uma suíte organizada, reproduzível e de fácil compreensão.
+A versão atual possui **15 cenários automatizados**, sendo:
+
+```text
+API REST: 9
+E2E / UI: 6
+Total:   15
+```
+
+A última execução completa validada apresentou:
+
+```text
+15 testes executados
+15 aprovados
+0 falhas
+```
+
+O objetivo da v1.0 não é concentrar o maior número possível de ferramentas, mas demonstrar uma suíte organizada, reproduzível, documentada e de fácil compreensão.
 
 ---
 
 ## 👨‍💻 Autor
 
 **Felipe de Oliveira**
+
+QA | Test Automation | Cypress | Playwright | API Testing
 
 Projeto desenvolvido como parte do portfólio profissional na área de **Quality Assurance e QA Automation**.
